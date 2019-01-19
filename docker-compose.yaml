@@ -1,0 +1,22 @@
+version: '3'
+services:
+  prisma:
+    image: registry.gitlab.com/e-venture/graphql-api:latest
+    networks:
+      - web
+    labels:
+      - traefik.enabled=true
+      - traefik.backend=chartr-cp-backend
+      - traefik.frontend.rule=Host:api.chartr.me
+      - traefik.docker.network=web
+      - traefik.port=4000
+    restart: always
+    environment:
+      - PRISMA_ENDPOINT=https://db.chartr.me
+      - PRISMA_MANAGEMENT_API_SECRET=geheim
+      - PRISMA_SECRET=geheim
+      - APP_SECRET=geheim
+
+networks:
+  web:
+    external: true
