@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "schema": "graphql get-schema -p prisma",
     "dev": "nodemon ./src/index.js",
+    "token": "prisma token",
     "start": "node ./src/index.js"
   },
   "repository": {
