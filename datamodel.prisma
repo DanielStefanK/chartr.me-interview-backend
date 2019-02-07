@@ -74,7 +74,7 @@ type Question {
   number: Int!
   question: String!
   subQuestions: [Question!]! @relation(name: "QuestionQuestionRelation")
-  answerTags: [String!]!
+  answerTags: [EvaluationTag!]!
   matchTags: [String!]!
   distraction: Int @default(value: "0")
   time: Int
@@ -82,6 +82,11 @@ type Question {
   interview: Interview @relation(name: "InterviewQuestionRelation")
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+type EvaluationTag {
+  tag: String! @default(value: "")
+  value: Int! @default(value: "0")
 }
 
 type Template {
