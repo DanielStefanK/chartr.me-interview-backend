@@ -1,7 +1,11 @@
 # source: https://db.chartr.me
-# timestamp: Sat Jan 19 2019 17:58:19 GMT+0100 (GMT+01:00)
+# timestamp: Thu Feb 07 2019 16:51:07 GMT+0100 (GMT+01:00)
 
 type AggregateCompany {
+  count: Int!
+}
+
+type AggregateEvaluationTag {
   count: Int!
 }
 
@@ -471,6 +475,263 @@ input CompanyWhereUniqueInput {
 }
 
 scalar DateTime
+
+type EvaluationTag {
+  tag: String!
+  value: Int!
+}
+
+"""A connection to a list of items."""
+type EvaluationTagConnection {
+  """Information to aid in pagination."""
+  pageInfo: PageInfo!
+
+  """A list of edges."""
+  edges: [EvaluationTagEdge]!
+  aggregate: AggregateEvaluationTag!
+}
+
+input EvaluationTagCreateInput {
+  tag: String
+  value: Int
+}
+
+input EvaluationTagCreateManyInput {
+  create: [EvaluationTagCreateInput!]
+}
+
+"""An edge in a connection."""
+type EvaluationTagEdge {
+  """The item at the end of the edge."""
+  node: EvaluationTag!
+
+  """A cursor for use in pagination."""
+  cursor: String!
+}
+
+enum EvaluationTagOrderByInput {
+  tag_ASC
+  tag_DESC
+  value_ASC
+  value_DESC
+  id_ASC
+  id_DESC
+  updatedAt_ASC
+  updatedAt_DESC
+  createdAt_ASC
+  createdAt_DESC
+}
+
+type EvaluationTagPreviousValues {
+  tag: String!
+  value: Int!
+}
+
+input EvaluationTagScalarWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EvaluationTagScalarWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EvaluationTagScalarWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EvaluationTagScalarWhereInput!]
+  tag: String
+
+  """All values that are not equal to given value."""
+  tag_not: String
+
+  """All values that are contained in given list."""
+  tag_in: [String!]
+
+  """All values that are not contained in given list."""
+  tag_not_in: [String!]
+
+  """All values less than the given value."""
+  tag_lt: String
+
+  """All values less than or equal the given value."""
+  tag_lte: String
+
+  """All values greater than the given value."""
+  tag_gt: String
+
+  """All values greater than or equal the given value."""
+  tag_gte: String
+
+  """All values containing the given string."""
+  tag_contains: String
+
+  """All values not containing the given string."""
+  tag_not_contains: String
+
+  """All values starting with the given string."""
+  tag_starts_with: String
+
+  """All values not starting with the given string."""
+  tag_not_starts_with: String
+
+  """All values ending with the given string."""
+  tag_ends_with: String
+
+  """All values not ending with the given string."""
+  tag_not_ends_with: String
+  value: Int
+
+  """All values that are not equal to given value."""
+  value_not: Int
+
+  """All values that are contained in given list."""
+  value_in: [Int!]
+
+  """All values that are not contained in given list."""
+  value_not_in: [Int!]
+
+  """All values less than the given value."""
+  value_lt: Int
+
+  """All values less than or equal the given value."""
+  value_lte: Int
+
+  """All values greater than the given value."""
+  value_gt: Int
+
+  """All values greater than or equal the given value."""
+  value_gte: Int
+}
+
+type EvaluationTagSubscriptionPayload {
+  mutation: MutationType!
+  node: EvaluationTag
+  updatedFields: [String!]
+  previousValues: EvaluationTagPreviousValues
+}
+
+input EvaluationTagSubscriptionWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EvaluationTagSubscriptionWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EvaluationTagSubscriptionWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EvaluationTagSubscriptionWhereInput!]
+
+  """
+  The subscription event gets dispatched when it's listed in mutation_in
+  """
+  mutation_in: [MutationType!]
+
+  """
+  The subscription event gets only dispatched when one of the updated fields names is included in this list
+  """
+  updatedFields_contains: String
+
+  """
+  The subscription event gets only dispatched when all of the field names included in this list have been updated
+  """
+  updatedFields_contains_every: [String!]
+
+  """
+  The subscription event gets only dispatched when some of the field names included in this list have been updated
+  """
+  updatedFields_contains_some: [String!]
+  node: EvaluationTagWhereInput
+}
+
+input EvaluationTagUpdateManyDataInput {
+  tag: String
+  value: Int
+}
+
+input EvaluationTagUpdateManyInput {
+  create: [EvaluationTagCreateInput!]
+  updateMany: [EvaluationTagUpdateManyWithWhereNestedInput!]
+  deleteMany: [EvaluationTagScalarWhereInput!]
+}
+
+input EvaluationTagUpdateManyMutationInput {
+  tag: String
+  value: Int
+}
+
+input EvaluationTagUpdateManyWithWhereNestedInput {
+  where: EvaluationTagScalarWhereInput!
+  data: EvaluationTagUpdateManyDataInput!
+}
+
+input EvaluationTagWhereInput {
+  """Logical AND on all given filters."""
+  AND: [EvaluationTagWhereInput!]
+
+  """Logical OR on all given filters."""
+  OR: [EvaluationTagWhereInput!]
+
+  """Logical NOT on all given filters combined by AND."""
+  NOT: [EvaluationTagWhereInput!]
+  tag: String
+
+  """All values that are not equal to given value."""
+  tag_not: String
+
+  """All values that are contained in given list."""
+  tag_in: [String!]
+
+  """All values that are not contained in given list."""
+  tag_not_in: [String!]
+
+  """All values less than the given value."""
+  tag_lt: String
+
+  """All values less than or equal the given value."""
+  tag_lte: String
+
+  """All values greater than the given value."""
+  tag_gt: String
+
+  """All values greater than or equal the given value."""
+  tag_gte: String
+
+  """All values containing the given string."""
+  tag_contains: String
+
+  """All values not containing the given string."""
+  tag_not_contains: String
+
+  """All values starting with the given string."""
+  tag_starts_with: String
+
+  """All values not starting with the given string."""
+  tag_not_starts_with: String
+
+  """All values ending with the given string."""
+  tag_ends_with: String
+
+  """All values not ending with the given string."""
+  tag_not_ends_with: String
+  value: Int
+
+  """All values that are not equal to given value."""
+  value_not: Int
+
+  """All values that are contained in given list."""
+  value_in: [Int!]
+
+  """All values that are not contained in given list."""
+  value_not_in: [Int!]
+
+  """All values less than the given value."""
+  value_lt: Int
+
+  """All values less than or equal the given value."""
+  value_lte: Int
+
+  """All values greater than the given value."""
+  value_gt: Int
+
+  """All values greater than or equal the given value."""
+  value_gte: Int
+}
 
 type Interview implements Node {
   id: ID!
@@ -1176,6 +1437,7 @@ type Mutation {
   createResult(data: ResultCreateInput!): Result!
   createQuestion(data: QuestionCreateInput!): Question!
   createTemplate(data: TemplateCreateInput!): Template!
+  createEvaluationTag(data: EvaluationTagCreateInput!): EvaluationTag!
   updateUser(data: UserUpdateInput!, where: UserWhereUniqueInput!): User
   updateCompany(data: CompanyUpdateInput!, where: CompanyWhereUniqueInput!): Company
   updateInterview(data: InterviewUpdateInput!, where: InterviewWhereUniqueInput!): Interview
@@ -1200,12 +1462,14 @@ type Mutation {
   updateManyResults(data: ResultUpdateManyMutationInput!, where: ResultWhereInput): BatchPayload!
   updateManyQuestions(data: QuestionUpdateManyMutationInput!, where: QuestionWhereInput): BatchPayload!
   updateManyTemplates(data: TemplateUpdateManyMutationInput!, where: TemplateWhereInput): BatchPayload!
+  updateManyEvaluationTags(data: EvaluationTagUpdateManyMutationInput!, where: EvaluationTagWhereInput): BatchPayload!
   deleteManyUsers(where: UserWhereInput): BatchPayload!
   deleteManyCompanies(where: CompanyWhereInput): BatchPayload!
   deleteManyInterviews(where: InterviewWhereInput): BatchPayload!
   deleteManyResults(where: ResultWhereInput): BatchPayload!
   deleteManyQuestions(where: QuestionWhereInput): BatchPayload!
   deleteManyTemplates(where: TemplateWhereInput): BatchPayload!
+  deleteManyEvaluationTags(where: EvaluationTagWhereInput): BatchPayload!
   executeRaw(database: PrismaDatabase, query: String!): Json!
 }
 
@@ -1258,6 +1522,7 @@ type Query {
   results(where: ResultWhereInput, orderBy: ResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Result]!
   questions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question]!
   templates(where: TemplateWhereInput, orderBy: TemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Template]!
+  evaluationTags(where: EvaluationTagWhereInput, orderBy: EvaluationTagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EvaluationTag]!
   user(where: UserWhereUniqueInput!): User
   company(where: CompanyWhereUniqueInput!): Company
   interview(where: InterviewWhereUniqueInput!): Interview
@@ -1270,6 +1535,7 @@ type Query {
   resultsConnection(where: ResultWhereInput, orderBy: ResultOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): ResultConnection!
   questionsConnection(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): QuestionConnection!
   templatesConnection(where: TemplateWhereInput, orderBy: TemplateOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): TemplateConnection!
+  evaluationTagsConnection(where: EvaluationTagWhereInput, orderBy: EvaluationTagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): EvaluationTagConnection!
 
   """Fetches an object given its ID"""
   node(
@@ -1285,7 +1551,7 @@ type Question implements Node {
   number: Int!
   question: String!
   subQuestions(where: QuestionWhereInput, orderBy: QuestionOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [Question!]
-  answerTags: [String!]!
+  answerTags(where: EvaluationTagWhereInput, orderBy: EvaluationTagOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [EvaluationTag!]
   matchTags: [String!]!
   distraction: Int
   time: Int
@@ -1305,10 +1571,6 @@ type QuestionConnection {
   aggregate: AggregateQuestion!
 }
 
-input QuestionCreateanswerTagsInput {
-  set: [String!]
-}
-
 input QuestionCreategivenAnswersInput {
   set: [String!]
 }
@@ -1318,12 +1580,12 @@ input QuestionCreateInput {
   question: String!
   distraction: Int
   time: Int
-  answerTags: QuestionCreateanswerTagsInput
   matchTags: QuestionCreatematchTagsInput
   givenAnswers: QuestionCreategivenAnswersInput
   parentTemplate: TemplateCreateOneWithoutInterviewInput
   parentQuestion: QuestionCreateOneWithoutSubQuestionsInput
   subQuestions: QuestionCreateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagCreateManyInput
   interview: InterviewCreateOneWithoutInterviewInput
 }
 
@@ -1356,12 +1618,12 @@ input QuestionCreateWithoutInterviewInput {
   question: String!
   distraction: Int
   time: Int
-  answerTags: QuestionCreateanswerTagsInput
   matchTags: QuestionCreatematchTagsInput
   givenAnswers: QuestionCreategivenAnswersInput
   parentTemplate: TemplateCreateOneWithoutInterviewInput
   parentQuestion: QuestionCreateOneWithoutSubQuestionsInput
   subQuestions: QuestionCreateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagCreateManyInput
 }
 
 input QuestionCreateWithoutParentQuestionInput {
@@ -1369,11 +1631,11 @@ input QuestionCreateWithoutParentQuestionInput {
   question: String!
   distraction: Int
   time: Int
-  answerTags: QuestionCreateanswerTagsInput
   matchTags: QuestionCreatematchTagsInput
   givenAnswers: QuestionCreategivenAnswersInput
   parentTemplate: TemplateCreateOneWithoutInterviewInput
   subQuestions: QuestionCreateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagCreateManyInput
   interview: InterviewCreateOneWithoutInterviewInput
 }
 
@@ -1382,11 +1644,11 @@ input QuestionCreateWithoutParentTemplateInput {
   question: String!
   distraction: Int
   time: Int
-  answerTags: QuestionCreateanswerTagsInput
   matchTags: QuestionCreatematchTagsInput
   givenAnswers: QuestionCreategivenAnswersInput
   parentQuestion: QuestionCreateOneWithoutSubQuestionsInput
   subQuestions: QuestionCreateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagCreateManyInput
   interview: InterviewCreateOneWithoutInterviewInput
 }
 
@@ -1395,11 +1657,11 @@ input QuestionCreateWithoutSubQuestionsInput {
   question: String!
   distraction: Int
   time: Int
-  answerTags: QuestionCreateanswerTagsInput
   matchTags: QuestionCreatematchTagsInput
   givenAnswers: QuestionCreategivenAnswersInput
   parentTemplate: TemplateCreateOneWithoutInterviewInput
   parentQuestion: QuestionCreateOneWithoutSubQuestionsInput
+  answerTags: EvaluationTagCreateManyInput
   interview: InterviewCreateOneWithoutInterviewInput
 }
 
@@ -1433,7 +1695,6 @@ type QuestionPreviousValues {
   id: ID!
   number: Int!
   question: String!
-  answerTags: [String!]!
   matchTags: [String!]!
   distraction: Int
   time: Int
@@ -1682,10 +1943,6 @@ input QuestionSubscriptionWhereInput {
   node: QuestionWhereInput
 }
 
-input QuestionUpdateanswerTagsInput {
-  set: [String!]
-}
-
 input QuestionUpdategivenAnswersInput {
   set: [String!]
 }
@@ -1695,12 +1952,12 @@ input QuestionUpdateInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
   parentTemplate: TemplateUpdateOneWithoutInterviewInput
   parentQuestion: QuestionUpdateOneWithoutSubQuestionsInput
   subQuestions: QuestionUpdateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagUpdateManyInput
   interview: InterviewUpdateOneWithoutInterviewInput
 }
 
@@ -1709,7 +1966,6 @@ input QuestionUpdateManyDataInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
 }
@@ -1719,7 +1975,6 @@ input QuestionUpdateManyMutationInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
 }
@@ -1780,12 +2035,12 @@ input QuestionUpdateWithoutInterviewDataInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
   parentTemplate: TemplateUpdateOneWithoutInterviewInput
   parentQuestion: QuestionUpdateOneWithoutSubQuestionsInput
   subQuestions: QuestionUpdateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagUpdateManyInput
 }
 
 input QuestionUpdateWithoutParentQuestionDataInput {
@@ -1793,11 +2048,11 @@ input QuestionUpdateWithoutParentQuestionDataInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
   parentTemplate: TemplateUpdateOneWithoutInterviewInput
   subQuestions: QuestionUpdateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagUpdateManyInput
   interview: InterviewUpdateOneWithoutInterviewInput
 }
 
@@ -1806,11 +2061,11 @@ input QuestionUpdateWithoutParentTemplateDataInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
   parentQuestion: QuestionUpdateOneWithoutSubQuestionsInput
   subQuestions: QuestionUpdateManyWithoutParentQuestionInput
+  answerTags: EvaluationTagUpdateManyInput
   interview: InterviewUpdateOneWithoutInterviewInput
 }
 
@@ -1819,11 +2074,11 @@ input QuestionUpdateWithoutSubQuestionsDataInput {
   question: String
   distraction: Int
   time: Int
-  answerTags: QuestionUpdateanswerTagsInput
   matchTags: QuestionUpdatematchTagsInput
   givenAnswers: QuestionUpdategivenAnswersInput
   parentTemplate: TemplateUpdateOneWithoutInterviewInput
   parentQuestion: QuestionUpdateOneWithoutSubQuestionsInput
+  answerTags: EvaluationTagUpdateManyInput
   interview: InterviewUpdateOneWithoutInterviewInput
 }
 
@@ -2069,6 +2324,9 @@ input QuestionWhereInput {
   subQuestions_every: QuestionWhereInput
   subQuestions_some: QuestionWhereInput
   subQuestions_none: QuestionWhereInput
+  answerTags_every: EvaluationTagWhereInput
+  answerTags_some: EvaluationTagWhereInput
+  answerTags_none: EvaluationTagWhereInput
   interview: InterviewWhereInput
 }
 
@@ -2927,6 +3185,7 @@ type Subscription {
   result(where: ResultSubscriptionWhereInput): ResultSubscriptionPayload
   question(where: QuestionSubscriptionWhereInput): QuestionSubscriptionPayload
   template(where: TemplateSubscriptionWhereInput): TemplateSubscriptionPayload
+  evaluationTag(where: EvaluationTagSubscriptionWhereInput): EvaluationTagSubscriptionPayload
 }
 
 type Template implements Node {
