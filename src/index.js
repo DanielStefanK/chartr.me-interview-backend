@@ -53,12 +53,13 @@ io.on('connection', function(socket) {
   console.log('a user connected');
 
   socket.on('interview_id', async function(id) {
-    socket[id] = id;
-    console.log('id: ' + socket[id]);
+    socket._id = id;
+    console.log('id: ' + socket._id);
     interview = await db.query.interview(
-      { where: { id: socket[id] } },
-      '{name company {name} activeUntil deleted results {id} limit interview {question subQuestions {question}}}',
+      { where: { id: socket._id } },
+      '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
     );
+
     socket.emit('question', interview.interview[0].question);
   });
 
@@ -69,64 +70,111 @@ io.on('connection', function(socket) {
   socket.on('credentials', function(msg) {
     console.log('credentials: ' + msg);
   });
-
+  socket._questionNumber = 1;
+  socket._subQuestionLevel = 0;
+  socket._whichSubQuestion = 0;
   socket.on('message', async function(id, msg) {
-    console.log('message: ' + msg);
-    socket['questionNumber'] = 0;
-
-    var count = socket['questionNumber'];
-    //todo: currently does not count up as intended.
-
-    //console.log(socket['questionNumber']);
     interview = await db.query.interview(
       { where: { id } },
-      '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
+      '{ name company {name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
     );
-
-    var wordCountQuestion = countWords(interview.interview[count].question);
-    var wordCountMsg = countWords(msg);
-    var lengthVariable = 1.0;
-    var lengthVariableMAX = 6.17938;
-    var lengthVariableMIN = 0.53423;
-    // could also be defined by the user
-    // these numbers for lengthVariableMAX and MIN are not set and should be changed acording to the data we would reseive for a prototype as given in the task we got i will be using the numbers from the paper
-    if (wordCountMsg / wordCountQuestion > lengthVariableMAX) {
-      console.log('got here');
-      lengthVariable =
-        0.0 + Math.exp(lengthVariableMAX - wordCountMsg / wordCountQuestion);
-    } else if (wordCountMsg / wordCountQuestion < lengthVariableMIN) {
-      lengthVariable = 1 - Math.exp(-(wordCountMsg / wordCountQuestion));
-    }
-    // what happens here is when wordCountMsg / wordCountQuestion is higher then our given MAX we decres the value of given tag matched by an exp funktion vice versa we do it MIN
-
-    //todo: tags, results and tagvalue should be pulled from db
-
-    var tags = ['Word', 'okay'];
-    var matchTags = ['Word'];
-    var askSubQuestion = false;
-    matchTags.forEach(function(tag) {
-      if (msg.indexOf(tag) !== -1) {
-        askSubQuestion = true;
+    if (socket._questionNumber !== interview.interview.length) {
+      console.log('message: ' + msg);
+      console.log(interview.interview[socket._questionNumber].question);
+      var wordCountQuestion = countWords(
+        interview.interview[socket._questionNumber].question,
+      );
+      var wordCountMsg = countWords(msg);
+      var lengthVariable = 1.0;
+      var lengthVariableMAX = 6.17938;
+      var lengthVariableMIN = 0.53423;
+      // could also be defined by the user
+      // these numbers for lengthVariableMAX and MIN are not set and should be changed acording to the data we would reseive for a prototype as given in the task we got i will be using the numbers from the paper
+      if (wordCountMsg / wordCountQuestion > lengthVariableMAX) {
+        console.log('got here');
+        lengthVariable =
+          0.0 + Math.exp(lengthVariableMAX - wordCountMsg / wordCountQuestion);
+      } else if (wordCountMsg / wordCountQuestion < lengthVariableMIN) {
+        lengthVariable = 1 - Math.exp(-(wordCountMsg / wordCountQuestion));
       }
-    });
-    //defines if a subquestion needs to be asked
-    var result = 0.0;
-    var tagvalues = [100, -98];
-    var i = 0;
+      // what happens here is when wordCountMsg / wordCountQuestion is higher then our given MAX we decres the value of given tag matched by an exp funktion vice versa we do it MIN
 
-    tags.forEach(function(tag) {
-      if (msg.indexOf(tag) !== -1) {
-        result += (tagvalues[i] / 100) * lengthVariable;
+      //todo:results should be pulled from db
+
+      var tags = interview.interview[socket._questionNumber].answerTags;
+      var subQuestionsFromDB =
+        interview.interview[socket._questionNumber - 1].subQuestions;
+
+      for (var i = 1; i <= socket._subQuestionLevel; i++) {
+        subQuestionsFromDB =
+          subQuestionsFromDB[socket._whichSubQuestion].subQuestions;
+        console.log('i:' + i);
+      } //goes deaper for subsubquestions for each subQuestionLevel
+
+      console.log('socket._subQuestionLevel' + socket._subQuestionLevel);
+      console.log('tags');
+
+      console.log(tags);
+
+      var subQuestionVariable;
+      console.log('sQFDB');
+      console.log(subQuestionsFromDB);
+      var askSubQuestion = false;
+      var numberOfSubQuestion = 0;
+      if (typeof subQuestionsFromDB !== 'undefined') {
+        subQuestionsFromDB.forEach(function(subQuestion) {
+          subQuestion.matchTags.forEach(function(tag) {
+            if (msg.indexOf(tag) !== -1) {
+              subQuestionVariable = subQuestion;
+              tags = subQuestion.answerTags;
+              askSubQuestion = true;
+              socket._whichSubQuestion = numberOfSubQuestion;
+            }
+            numberOfSubQuestion++;
+          });
+        });
       }
-      i++;
-    });
-    //adds up the result for a question
-    //todo: result needs to be saved up in db
-    if (askSubQuestion) {
-      socket.emit('question', 'subQuestion');
+      //defines if a subquestion needs to be asked and gets subQuestionVariable (array with all parameters of a given question)
+      var result = 0.0;
+
+      tags.forEach(function(tag) {
+        if (msg.indexOf(tag.tag) !== -1) {
+          result += (tag.value / 100) * lengthVariable;
+          console.log('result' + result);
+        }
+      });
+
+      //adds up the result for a question
+      //todo: result needs to be saved up in db
+      console.log('askSubQuestion:' + askSubQuestion);
+      if (askSubQuestion) {
+        socket.emit(
+          'question',
+          subQuestionVariable.question,
+          subQuestionVariable.time,
+          subQuestionVariable.distraction,
+        );
+
+        socket._subQuestionLevel += 1;
+        // to get a level deaper in subquestions
+      } else {
+        console.log(interview.interview.length);
+        console.log(socket._questionNumber);
+
+        socket.emit(
+          'question',
+          interview.interview[socket._questionNumber].question,
+          interview.interview[socket._questionNumber].time,
+          interview.interview[socket._questionNumber].distraction,
+        );
+
+        socket._questionNumber += 1;
+        // to get to the next question
+        socket._subQuestionLevel = 0;
+        // to reset the level so lower question wont be asked
+      }
     } else {
-      socket.emit('question', interview.interview[count].question);
-      socket['questionNumber'] += 1;
+      socket.emit('question', 'End');
     }
   });
 });
