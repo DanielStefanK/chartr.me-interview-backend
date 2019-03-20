@@ -5,6 +5,7 @@ const http = require('http').Server(app);
 const io = require('socket.io')(http);
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const { performance, PerformanceObserver } = require('perf_hooks');
 //var tm = require('text-miner');
 
 const db = require('./db');
@@ -49,8 +50,10 @@ function countWords(str) {
 io.on('connection', function(socket) {
   //todo: create data struction manageing all clients at once and serving them the right questions
   let interview;
-
+  socket._content = new Object();
   console.log('a user connected');
+  socket._timestamp0;
+  socket._timestamp1;
 
   socket.on('interview_id', async function(id) {
     socket._id = id;
@@ -61,22 +64,34 @@ io.on('connection', function(socket) {
     );
 
     socket.emit('question', interview.interview[0].question);
+
+    socket._timestamp0 = performance.now();
+    // for checking how long a user took
+
+    socket._content['question' + 0] = interview.interview[0].question;
   });
 
   socket.on('disconnect', function() {
     console.log('user disconnected');
   });
-
+  socket._email;
+  socket._name;
   socket.on('credentials', function(msg) {
-    console.log('credentials: ' + msg);
+    console.log('credentials: name:' + msg.name + ' email:' + msg.email);
+    socket._email = msg.email;
+    socket._name = msg.name;
   });
   socket._questionNumber = 1;
   socket._subQuestionLevel = 0;
   socket._whichSubQuestion = 0;
+
   socket.on('message', async function(id, msg) {
+    socket._timestamp1 = performance.now();
+    var durationInMs = socket._timestamp1 - socket._timestamp0;
+    // mesure time to answer in sec
     interview = await db.query.interview(
       { where: { id } },
-      '{ name company {name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
+      '{ name company {id name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
     );
     if (socket._questionNumber !== interview.interview.length) {
       console.log('message: ' + msg);
@@ -98,8 +113,6 @@ io.on('connection', function(socket) {
         lengthVariable = 1 - Math.exp(-(wordCountMsg / wordCountQuestion));
       }
       // what happens here is when wordCountMsg / wordCountQuestion is higher then our given MAX we decres the value of given tag matched by an exp funktion vice versa we do it MIN
-
-      //todo:results should be pulled from db
 
       var tags = interview.interview[socket._questionNumber].answerTags;
       var subQuestionsFromDB =
@@ -154,13 +167,41 @@ io.on('connection', function(socket) {
           subQuestionVariable.time,
           subQuestionVariable.distraction,
         );
-
+        socket._timestamp0 = performance.now();
+        // reset timer for duration mesurment
+        if (socket._subQuestionLevel > 1) {
+          socket._content['subAnswer' + socket._subQuestionLevel] = msg;
+          socket._content[
+            'subDuration' + socket._subQuestionLevel
+          ] = durationInMs;
+        } else {
+          socket._content['answer' + (socket._questionNumber - 1)] = msg;
+          socket._content[
+            'duration' + (socket._questionNumber - 1)
+          ] = durationInMs;
+        }
         socket._subQuestionLevel += 1;
+
+        socket._content['subQuestion' + socket._subQuestionLevel] =
+          subQuestionVariable.question;
         // to get a level deaper in subquestions
       } else {
         console.log(interview.interview.length);
         console.log(socket._questionNumber);
 
+        if (socket._subQuestionLevel == 0) {
+          socket._content['answer' + (socket._questionNumber - 1)] = msg;
+          socket._content[
+            'duration' + (socket._questionNumber - 1)
+          ] = durationInMs;
+        } else {
+          socket._content['subAnswer' + socket._subQuestionLevel] = msg;
+          socket._content[
+            'subDuration' + socket._subQuestionLevel
+          ] = durationInMs;
+        }
+        socket._content['question' + socket._questionNumber] =
+          interview.interview[socket._questionNumber].question;
         socket.emit(
           'question',
           interview.interview[socket._questionNumber].question,
@@ -168,13 +209,42 @@ io.on('connection', function(socket) {
           interview.interview[socket._questionNumber].distraction,
         );
 
+        socket._timestamp0 = performance.now();
+        // reset timer for duration mesurment
         socket._questionNumber += 1;
+
         // to get to the next question
         socket._subQuestionLevel = 0;
         // to reset the level so lower question wont be asked
       }
     } else {
+      if (socket._subQuestionLevel == 0) {
+        socket._content['answer' + (socket._questionNumber - 1)] = msg;
+        socket._content[
+          'duration' + (socket._questionNumber - 1)
+        ] = durationInMs;
+      } else {
+        socket._content['subAnswer' + socket._subQuestionLevel] = msg;
+        socket._content[
+          'subDuration' + socket._subQuestionLevel
+        ] = durationInMs;
+      }
       socket.emit('question', 'End');
+
+      var jsonString = JSON.stringify(socket._content);
+      console.log(jsonString);
+
+      var resulta = new Object();
+      resulta.ip = 'test';
+      resulta.long = 0;
+      resulta.lat = 0;
+      // wofür waren die werte ?
+      resulta.email = socket._email;
+      resulta.name = socket._name;
+      resulta.score = result;
+      resulta.content = jsonString;
+      resulta.interviewId = socket._id;
+      resulta.companyId = interview.company.id;
     }
   });
 });
