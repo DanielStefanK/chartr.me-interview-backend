@@ -235,16 +235,26 @@ io.on('connection', function(socket) {
       console.log(jsonString);
 
       var resulta = new Object();
-      resulta.ip = 'test';
-      resulta.long = 0;
-      resulta.lat = 0;
-      // wofür waren die werte ?
       resulta.email = socket._email;
       resulta.name = socket._name;
       resulta.score = result;
       resulta.content = jsonString;
-      resulta.interviewId = socket._id;
-      resulta.companyId = interview.company.id;
+
+      db.mutation.createResult({
+        data: {
+          ...result,
+          interview: {
+            connect: {
+              id: socket._id,
+            },
+          },
+          company: {
+            connect: {
+              id: interview.company.id,
+            },
+          },
+        },
+      });
     }
   });
 });
