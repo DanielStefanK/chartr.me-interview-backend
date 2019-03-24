@@ -234,16 +234,14 @@ io.on('connection', function(socket) {
       var jsonString = JSON.stringify(socket._content);
       console.log(jsonString);
 
-      var resulta = new Object();
-      resulta.email = socket._email;
-      resulta.name = socket._name;
-      resulta.score = result;
-      resulta.content = jsonString;
-
       db.mutation
         .createResult({
           data: {
-            ...resulta,
+            deleted: false,
+            name: socket._name,
+            email: socket._email,
+            score: result.score,
+            content: jsonString,
             interview: {
               connect: {
                 id: socket._id,
