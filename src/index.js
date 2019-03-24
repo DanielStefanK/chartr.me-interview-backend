@@ -240,7 +240,7 @@ io.on('connection', function(socket) {
             deleted: false,
             name: socket._name,
             email: socket._email,
-            score: result.score,
+            score: result,
             content: jsonString,
             interview: {
               connect: {
@@ -255,6 +255,9 @@ io.on('connection', function(socket) {
           },
         })
         .then(data => {
+          console.log(data);
+        })
+        .catch(data => {
           console.log(data);
         });
     }
