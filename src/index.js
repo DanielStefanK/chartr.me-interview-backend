@@ -240,21 +240,25 @@ io.on('connection', function(socket) {
       resulta.score = result;
       resulta.content = jsonString;
 
-      db.mutation.createResult({
-        data: {
-          ...result,
-          interview: {
-            connect: {
-              id: socket._id,
+      db.mutation
+        .createResult({
+          data: {
+            ...resulta,
+            interview: {
+              connect: {
+                id: socket._id,
+              },
+            },
+            company: {
+              connect: {
+                id: interview.company.id,
+              },
             },
           },
-          company: {
-            connect: {
-              id: interview.company.id,
-            },
-          },
-        },
-      });
+        })
+        .then(data => {
+          console.log(data);
+        });
     }
   });
 });
