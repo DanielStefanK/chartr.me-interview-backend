@@ -241,7 +241,7 @@ io.on('connection', function(socket) {
             name: socket._name,
             email: socket._email,
             score: result,
-            content: jsonString,
+            content: socket._content,
             interview: {
               connect: {
                 id: socket._id,
