@@ -231,9 +231,6 @@ io.on('connection', function(socket) {
       }
       socket.emit('question', 'End');
 
-      var jsonString = JSON.stringify(socket._content);
-      console.log(jsonString);
-
       db.mutation
         .createResult({
           data: {
