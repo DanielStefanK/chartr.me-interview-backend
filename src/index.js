@@ -158,7 +158,7 @@ io.on('connection', function(socket) {
       });
 
       //adds up the result for a question
-      //todo: result needs to be saved up in db
+
       console.log('askSubQuestion:' + askSubQuestion);
       if (askSubQuestion) {
         socket.emit(
