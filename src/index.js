@@ -54,16 +54,16 @@ io.on('connection', function(socket) {
   console.log('a user connected');
   socket._timestamp0;
   socket._timestamp1;
-
+  socket._id;
   socket.on('interview_id', async function(id) {
     socket._id = id;
     console.log('id: ' + socket._id);
     interview = await db.query.interview(
       { where: { id: socket._id } },
-      '{name company {name} activeUntil deleted results {id} limit interview { question time distraction subQuestions {question}}}',
+      '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
     );
 
-    socket.emit('question', interview.interview[0]);
+    socket.emit('question', interview.interview[0].question);
 
     socket._timestamp0 = performance.now();
     // for checking how long a user took
@@ -91,7 +91,7 @@ io.on('connection', function(socket) {
     // mesure time to answer in sec
     interview = await db.query.interview(
       { where: { id: socket._id } },
-      '{ name company {id name} activeUntil deleted results {id} limit interview {distraction question time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
+      '{ name company {id name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
     );
     if (socket._questionNumber !== interview.interview.length) {
       console.log('message: ' + msg);
@@ -229,7 +229,7 @@ io.on('connection', function(socket) {
           'subDuration' + socket._subQuestionLevel
         ] = durationInMs;
       }
-      socket.emit('end', 'End');
+      socket.emit('question', 'End');
 
       db.mutation
         .createResult({
