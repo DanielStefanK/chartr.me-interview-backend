@@ -60,10 +60,10 @@ io.on('connection', function(socket) {
     console.log('id: ' + socket._id);
     interview = await db.query.interview(
       { where: { id: socket._id } },
-      '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
+      '{name company {name} activeUntil deleted results {id} limit interview { question time distraction subQuestions {question}}}',
     );
 
-    socket.emit('question', interview.interview[0].question);
+    socket.emit('question', interview.interview[0]);
 
     socket._timestamp0 = performance.now();
     // for checking how long a user took
@@ -85,13 +85,13 @@ io.on('connection', function(socket) {
   socket._subQuestionLevel = 0;
   socket._whichSubQuestion = 0;
 
-  socket.on('message', async function(id, msg) {
+  socket.on('message', async function(msg) {
     socket._timestamp1 = performance.now();
     var durationInMs = socket._timestamp1 - socket._timestamp0;
     // mesure time to answer in sec
     interview = await db.query.interview(
-      { where: { id } },
-      '{ name company {id name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
+      { where: { id: socket._id } },
+      '{ name company {id name} activeUntil deleted results {id} limit interview {distraction question time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
     );
     if (socket._questionNumber !== interview.interview.length) {
       console.log('message: ' + msg);
@@ -229,7 +229,7 @@ io.on('connection', function(socket) {
           'subDuration' + socket._subQuestionLevel
         ] = durationInMs;
       }
-      socket.emit('question', 'End');
+      socket.emit('end', 'End');
 
       db.mutation
         .createResult({
