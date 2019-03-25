@@ -63,7 +63,7 @@ io.on('connection', function(socket) {
       '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
     );
 
-    socket.emit('question', interview.interview[0].question);
+    socket.emit('question', interview.interview[0]);
 
     socket._timestamp0 = performance.now();
     // for checking how long a user took
@@ -229,7 +229,7 @@ io.on('connection', function(socket) {
           'subDuration' + socket._subQuestionLevel
         ] = durationInMs;
       }
-      socket.emit('question', 'End');
+      socket.emit('end', 'End');
 
       db.mutation
         .createResult({
