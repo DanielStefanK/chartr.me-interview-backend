@@ -81,12 +81,7 @@ io.on('connection', function(socket) {
       '{ name company {id name} activeUntil deleted results {id} limit interview{distraction question  time subQuestions { subQuestions {question time distraction answerTags{tag value} matchTags} question time distraction answerTags{tag value} matchTags} answerTags{value tag}}}',
     );
 
-    socket.emit(
-      'question',
-      interview.interview[0].question,
-      interview.interview[0].time,
-      interview.interview[0].distraction,
-    );
+    socket.emit('question', interview.interview[0]);
     socket._lastSubQuestion = interview.interview[0].subQuestions;
     socket._askedQuestion = interview.interview[0].question;
     socket._answerTags = interview.interview[0].answerTags;
