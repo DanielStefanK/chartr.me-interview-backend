@@ -221,7 +221,7 @@ io.on('connection', function(socket) {
           'subDuration' + socket._subQuestionLevel
         ] = durationInMs;
       }
-      socket.emit('question', 'End');
+      socket.emit('end');
 
       db.mutation
         .createResult({
