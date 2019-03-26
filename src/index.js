@@ -69,7 +69,7 @@ io.on('connection', function(socket) {
   socket._questionNumber = 1;
   socket._subQuestionToAsk = [];
   socket._lastSubQuestion;
-  socket._askedQuestion = {};
+  socket._askedQuestion;
   socket._pair = [];
   socket._score = 0;
   socket._answerTags;
@@ -83,6 +83,13 @@ io.on('connection', function(socket) {
     );
 
     socket.emit('question', interview.interview[0]);
+
+    socket._lastSubQuestion = interview.interview[0].subQuestions;
+
+    socket._askedQuestion = interview.interview[0].question;
+
+    socket._answerTags = interview.interview[0].answerTags;
+
     socket._timestamp0 = performance.now();
     // for checking how long a user took
 
