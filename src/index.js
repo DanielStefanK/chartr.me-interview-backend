@@ -44,9 +44,11 @@ app.get('/api/:id', async function(req, res) {
     });
   }
 });
+
 function countWords(str) {
   return str.trim().split(/\s+/).length;
 } //function to count words in a given string
+
 io.on('connection', function(socket) {
   //todo: create data struction manageing all clients at once and serving them the right questions
   let interview;
@@ -63,7 +65,7 @@ io.on('connection', function(socket) {
       '{name company {name} activeUntil deleted results {id} limit interview { question subQuestions {question}}}',
     );
 
-    socket.emit('question', interview.interview[0].question);
+    socket.emit('question', interview.interview[0]);
 
     socket._timestamp0 = performance.now();
     // for checking how long a user took
@@ -161,12 +163,7 @@ io.on('connection', function(socket) {
 
       console.log('askSubQuestion:' + askSubQuestion);
       if (askSubQuestion) {
-        socket.emit(
-          'question',
-          subQuestionVariable.question,
-          subQuestionVariable.time,
-          subQuestionVariable.distraction,
-        );
+        socket.emit('question', subQuestionVariable);
         socket._timestamp0 = performance.now();
         // reset timer for duration mesurment
         if (socket._subQuestionLevel > 1) {
@@ -202,12 +199,7 @@ io.on('connection', function(socket) {
         }
         socket._content['question' + socket._questionNumber] =
           interview.interview[socket._questionNumber].question;
-        socket.emit(
-          'question',
-          interview.interview[socket._questionNumber].question,
-          interview.interview[socket._questionNumber].time,
-          interview.interview[socket._questionNumber].distraction,
-        );
+        socket.emit('question', interview.interview[socket._questionNumber]);
 
         socket._timestamp0 = performance.now();
         // reset timer for duration mesurment
