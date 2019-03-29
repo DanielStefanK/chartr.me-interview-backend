@@ -210,7 +210,7 @@ io.on('connection', function(socket) {
         console.log('length :' + socket._subQuestionToAsk.length);
         socket.emit('question', socket._lastSubQuestion);
 
-        socket._timestamp1 = performance.now();
+        socket._timestamp0 = performance.now();
         socket._askedQuestion = socket._lastSubQuestion.question;
         socket._answerTags = socket._lastSubQuestion.answerTags;
 
@@ -219,6 +219,8 @@ io.on('connection', function(socket) {
         // to define tag usage
       } else {
         socket.emit('question', interview.interview[socket._questionNumber]);
+        socket._timestamp0 = performance.now();
+
         socket._askedQuestion =
           interview.interview[socket._questionNumber].question;
         socket._answerTags =
