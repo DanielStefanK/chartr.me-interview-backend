@@ -177,7 +177,7 @@ io.on('connection', function(socket) {
 
     socket._answerTags.forEach(function(tag) {
       if (msg.indexOf(tag.tag) !== -1) {
-        socket._score += (tag.value / 100) * lengthVariable;
+        socket._score += Math.ceil(tag.value * lengthVariable);
         console.log('socket._score' + socket._score);
       }
     });
