@@ -50,6 +50,8 @@ function countWords(str) {
 } //function to count words in a given string
 
 function checkTagOnString(tag, str) {
+  str = str.toLowerCase();
+  tag = tag.toLowerCase();
   if (str.indexOf(tag) !== -1) {
     return true;
   } else {
