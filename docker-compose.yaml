@@ -1,15 +1,15 @@
 version: '3'
 services:
   prisma:
-    image: registry.gitlab.com/e-venture/graphql-api:latest
+    image: registry.gitlab.com/e-venture/interview-backend:latest
     networks:
       - web
     labels:
       - traefik.enabled=true
-      - traefik.backend=chartr-cp-backend
-      - traefik.frontend.rule=Host:api.chartr.me
+      - traefik.backend=chartr-interview-backend
+      - traefik.frontend.rule=Host:api.interview.chartr.me
       - traefik.docker.network=web
-      - traefik.port=4000
+      - traefik.port=3000
     restart: always
     environment:
       - PRISMA_ENDPOINT=https://db.chartr.me
